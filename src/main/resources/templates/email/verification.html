@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Votre code de vérification FitForge</title>
+  <!--
+    ================================================================
+     Email de verification FitForge AI
+    ----------------------------------------------------------------
+     Contraintes propres aux clients mail (Gmail, Outlook, Apple Mail) :
+      - mise en page en <table> (les clients ignorent flexbox/grid) ;
+      - styles EN LIGNE (Gmail supprime les <style> dans certains cas) ;
+      - largeur max 600 px, colonne unique -> lisible sur mobile ;
+      - couleurs de marque en dur (pas de variables CSS) ;
+      - aucune image distante : le logo est un bloc typographique, donc
+        rien a debloquer cote destinataire.
+    ================================================================
+  -->
+</head>
+<body style="margin:0; padding:0; background-color:#080c1a; -webkit-font-smoothing:antialiased;">
+
+<!-- Texte d'apercu affiche dans la liste des mails, puis masque -->
+<div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+  Votre code de vérification FitForge : <span th:text="${code}">000000</span> — valable 10 minutes.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background-color:#080c1a; padding:32px 16px;">
+  <tr>
+    <td align="center">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+             style="width:100%; max-width:600px; background-color:#0f1428; border-radius:24px;
+                    border:1px solid #232a4a; overflow:hidden;">
+
+        <!-- ══ En-tête : bandeau dégradé de marque ══════════════ -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#7C4DFF 0%,#00E5FF 100%);
+                     background-color:#7C4DFF; padding:36px 32px; text-align:center;">
+            <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                        font-size:30px; font-weight:800; letter-spacing:-0.8px; color:#ffffff;">
+              FIT<span style="font-weight:400;">FORGE</span>
+            </div>
+            <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                        font-size:11px; font-weight:700; letter-spacing:3px;
+                        color:rgba(255,255,255,0.85); margin-top:6px; text-transform:uppercase;">
+              Forge ton potentiel
+            </div>
+          </td>
+        </tr>
+
+        <!-- ══ Corps ═══════════════════════════════════════════ -->
+        <tr>
+          <td style="padding:38px 32px 8px 32px;
+                     font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+            <h1 style="margin:0 0 14px 0; font-size:23px; font-weight:700; color:#ffffff;
+                       line-height:1.3;">
+              Bienvenue, <span th:text="${fullName}" style="color:#00E5FF;">Sami</span> !
+            </h1>
+
+            <p style="margin:0 0 26px 0; font-size:15px; line-height:1.65; color:#9aa3c7;">
+              Plus qu'une étape avant de commencer. Saisissez ce code dans l'application
+              pour confirmer votre adresse email&nbsp;:
+            </p>
+          </td>
+        </tr>
+
+        <!-- ══ Le code ═════════════════════════════════════════ -->
+        <tr>
+          <td style="padding:0 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="background-color:#141830; border:1px solid #2d3560; border-radius:18px;">
+              <tr>
+                <td align="center" style="padding:26px 12px;
+                                          font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                  <div style="font-size:10px; font-weight:700; letter-spacing:2.5px;
+                              color:#6f78a0; text-transform:uppercase; margin-bottom:14px;">
+                    Votre code de vérification
+                  </div>
+                  <!-- Police monospace : les chiffres restent alignés et lisibles -->
+                  <div th:text="${code}"
+                       style="font-family:'SF Mono',Consolas,'Courier New',monospace;
+                              font-size:42px; font-weight:700; letter-spacing:11px;
+                              color:#00E5FF; line-height:1.1; padding-left:11px;">
+                    482915
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ Expiration ══════════════════════════════════════ -->
+        <tr>
+          <td style="padding:20px 32px 0 32px;
+                     font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="background-color:rgba(255,215,64,0.09);
+                          border-left:3px solid #FFD740; border-radius:8px;">
+              <tr>
+                <td style="padding:13px 16px; font-size:13.5px; line-height:1.55; color:#d8c98a;">
+                  ⏱ Ce code expire dans
+                  <strong th:text="${expiryMinutes} + ' minutes'" style="color:#FFD740;">10 minutes</strong>.
+                  Passé ce délai, demandez-en un nouveau depuis l'application.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ Avertissement de sécurité ═══════════════════════ -->
+        <tr>
+          <td style="padding:24px 32px 34px 32px;
+                     font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+            <p style="margin:0; font-size:13px; line-height:1.6; color:#6f78a0;">
+              Vous n'êtes pas à l'origine de cette inscription&nbsp;? Ignorez simplement ce message&nbsp;:
+              aucun compte ne sera activé sans ce code.
+              <br><br>
+              <span style="color:#57608a;">
+                Par sécurité, ne communiquez ce code à personne. L'équipe FitForge ne vous le
+                demandera jamais.
+              </span>
+            </p>
+          </td>
+        </tr>
+
+        <!-- ══ Pied de page ════════════════════════════════════ -->
+        <tr>
+          <td style="background-color:#0b0f1f; border-top:1px solid #1e2542;
+                     padding:22px 32px; text-align:center;
+                     font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+            <div style="font-size:12.5px; color:#57608a; line-height:1.6;">
+              <strong style="color:#7c86b5;">FitForge AI</strong> — Musculation, nutrition et coaching
+              <br>
+              Message automatique, merci de ne pas y répondre.
+            </div>
+          </td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

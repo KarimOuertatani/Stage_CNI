@@ -1,0 +1,39 @@
+# =====================================================================
+#  FitForge AI — Base de donnees PostgreSQL (developpement local)
+# ---------------------------------------------------------------------
+#  On lance PostgreSQL dans un conteneur Docker : rien ne s'installe en
+#  dur sur la machine, l'environnement est reproductible et jetable, et
+#  il est identique a ce qu'on aura en production.
+#
+#  Commandes utiles :
+#    docker compose up -d        -> demarrer la base en arriere-plan
+#    docker compose ps           -> verifier le statut (attendre "healthy")
+#    docker compose logs -f db   -> voir les logs de la base
+#    docker compose down         -> supprimer le conteneur (donnees gardees)
+#    docker compose down -v      -> tout supprimer, y compris les donnees
+# =====================================================================
+services:
+  db:
+    image: postgres:16
+    container_name: fitforge-db
+    environment:
+      # Ces trois valeurs doivent correspondre EXACTEMENT a application.yaml
+      POSTGRES_USER: fitforge
+      POSTGRES_PASSWORD: fitforge
+      POSTGRES_DB: fitforge
+    ports:
+      # On expose le port standard PostgreSQL pour que Spring Boot s'y connecte
+      - "5432:5432"
+    volumes:
+      # Volume nomme : les donnees survivent meme si on supprime le conteneur
+      - fitforge_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # Permet de savoir quand la base est VRAIMENT prete (statut "healthy")
+      test: ["CMD-SHELL", "pg_isready -U fitforge -d fitforge"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  # Volume nomme declare : Docker le gere et le conserve entre les runs
+  fitforge_pgdata:

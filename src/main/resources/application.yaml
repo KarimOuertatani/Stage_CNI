@@ -1,0 +1,310 @@
+# =====================================================================
+#  FitForge AI - Configuration de l'application Spring Boot
+# ---------------------------------------------------------------------
+#  Les identifiants de la base correspondent EXACTEMENT au
+#  docker-compose.yml (fitforge / fitforge / fitforge).
+# =====================================================================
+spring:
+  application:
+    name: fitforge-api
+
+  datasource:
+    # Connexion a PostgreSQL lance par docker-compose (port 5432)
+    url: jdbc:postgresql://localhost:5432/fitforge
+    username: fitforge
+    password: fitforge
+
+  jpa:
+    hibernate:
+      # C'est Flyway qui cree/gere le schema. Hibernate se contente de
+      # VERIFIER que les entites correspondent aux tables (echoue sinon).
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+    # On ouvre l'EntityManager pendant le rendu de la reponse : evite les
+    # LazyInitializationException quand un mapper lit une relation LAZY.
+    open-in-view: true
+
+  flyway:
+    # Flyway applique les migrations SQL de db/migration au demarrage
+    enabled: true
+    locations: classpath:db/migration
+
+  # Taille max des fichiers uploades (pieces jointes du chat, avatars).
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+
+  # ===================================================================
+  #  SMTP - envoi du code de verification d'email
+  # -------------------------------------------------------------------
+  #  Gmail exige un MOT DE PASSE D'APPLICATION (16 caracteres) et NON le
+  #  mot de passe du compte : https://myaccount.google.com/apppasswords
+  #  (la validation en deux etapes doit etre activee sur le compte).
+  #
+  #  Ces deux valeurs sont des SECRETS : elles ne sont jamais journalisees
+  #  ni renvoyees par l'API. En production, definir MAIL_USERNAME et
+  #  MAIL_APP_PASSWORD en variables d'environnement et RETIRER les valeurs
+  #  par defaut ci-dessous.
+  # ===================================================================
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:unityforce.dev@gmail.com}
+    password: ${MAIL_APP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          # Delais courts : l'envoi est asynchrone, mais un SMTP muet ne doit
+          # pas immobiliser un thread du pool indefiniment.
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  # Thymeleaf ne sert qu'au rendu des emails (pas de pages web servies).
+  thymeleaf:
+    cache: true
+    check-template-location: false
+
+server:
+  port: 8080
+
+# =====================================================================
+#  Configuration JWT "maison" (lue par JwtService via @Value)
+# ---------------------------------------------------------------------
+#  secret : cle Base64 d'au moins 256 bits (32 octets) pour HMAC-SHA256.
+#  En production, surcharge cette valeur par une variable d'environnement.
+# =====================================================================
+app:
+  jwt:
+    secret: "Zm9yZ2VfZml0Zm9yZ2Vfc2VjcmV0X2tleV9jaGFuZ2VfbWVfaW5fcHJvZHVjdGlvbl8yNTY="
+    expiration-ms: 86400000        # 24 heures en millisecondes
+  cors:
+    # Origines autorisees pour Flutter (dev). En prod : le domaine reel.
+    allowed-origins: "*"
+  # Dossier de stockage des fichiers uploades (avatars, pieces jointes du chat).
+  # Servi en HTTP sous /media/** (voir WebConfig). Chemin relatif au repertoire
+  # de lancement du backend (api/).
+  media:
+    dir: uploads
+    # Dossier des fichiers CONFIDENTIELS (justificatifs de candidature des
+    # coachs : piece d'identite, photos de diplomes). Contrairement a
+    # `dir` ci-dessus, il n'est servi par AUCUNE route statique : le seul
+    # acces passe par /api/v1/coach-application/documents/{id}/file, qui
+    # verifie a chaque appel que l'appelant est l'admin ou le proprietaire.
+    private-dir: ${MEDIA_PRIVATE_DIR:uploads-private}
+  # ===================================================================
+  #  Compte administrateur (console d'administration Next.js)
+  # -------------------------------------------------------------------
+  #  Cree au demarrage par AdminAccountBootstrapper SI l'email est libre.
+  #  Un compte deja existant n'est JAMAIS modifie : changer le mot de
+  #  passe ici ne reinitialise pas un compte en place.
+  #
+  #  En production : definir APP_ADMIN_EMAIL et APP_ADMIN_PASSWORD avant
+  #  le premier demarrage. Le mot de passe par defaut declenche un
+  #  avertissement dans les journaux tant qu'il n'est pas remplace.
+  # ===================================================================
+  admin:
+    email: ${APP_ADMIN_EMAIL:admin@fitforge.local}
+    password: ${APP_ADMIN_PASSWORD:ChangeMoi!2026}
+    full-name: ${APP_ADMIN_FULL_NAME:Equipe FitForge}
+  # Expediteur affiche dans les emails. Par defaut : l'adresse SMTP elle-meme.
+  mail:
+    from: ${MAIL_FROM:${MAIL_USERNAME:unityforce.dev@gmail.com}}
+    from-name: ${MAIL_FROM_NAME:FitForge AI}
+
+# =====================================================================
+#  FitForge - parametres metier
+# ---------------------------------------------------------------------
+#  Import du referentiel ExerciseDB (voir ExerciseImportService).
+#   - enabled : lance l'import au demarrage SI le catalogue importe est vide.
+#     Mettre IMPORT_EXERCISES=true le temps d'un demarrage pour peupler la base,
+#     puis remettre a false (evite de reconsommer le quota RapidAPI).
+#   - max : plafond d'exercices (le plan gratuit RapidAPI est limite a 200).
+# =====================================================================
+fitforge:
+  exercise-import:
+    enabled: ${IMPORT_EXERCISES:false}
+    max: ${IMPORT_EXERCISES_MAX:200}
+
+# =====================================================================
+#  EXERCISEDB V2 (AscendAPI via RapidAPI)
+# ---------------------------------------------------------------------
+#  La cle RapidAPI ne quitte JAMAIS le backend (jamais dans l'app Flutter).
+#  En production, surcharge-la par la variable d'environnement RAPIDAPI_KEY.
+#  La valeur par defaut ci-dessous permet un import immediat en local ; a
+#  remplacer/retirer avant tout depot public.
+# =====================================================================
+rapidapi:
+  key: ${RAPIDAPI_KEY:}
+  host: ${RAPIDAPI_HOST:edb-with-videos-and-images-by-ascendapi.p.rapidapi.com}
+  base-url: ${RAPIDAPI_BASE_URL:https://edb-with-videos-and-images-by-ascendapi.p.rapidapi.com}
+
+# =====================================================================
+#  USDA FOODDATA CENTRAL (nutrition)
+# ---------------------------------------------------------------------
+#  Source des valeurs nutritionnelles : l'adherent cherche un aliment,
+#  saisit une quantite en grammes, et le serveur calcule les macros.
+#
+#  * La cle est transmise via l'en-tete HTTP X-Api-Key (jamais dans une
+#    URL) : elle n'apparait donc dans AUCUN log. Elle ne quitte jamais le
+#    backend — l'app Flutter appelle uniquement notre propre API.
+#  * En production : definir USDA_API_KEY en variable d'environnement et
+#    RETIRER la valeur par defaut ci-dessous.
+#  * Quota du plan gratuit : 1000 requetes/heure. Le catalogue local
+#    (table food_items) met en cache chaque aliment importe, donc la
+#    consommation reelle chute a mesure que la base se remplit.
+#
+#  data-types : jeux de donnees USDA interroges.
+#    Foundation + SR Legacy = aliments generiques de reference (donnees
+#    fiables, valeurs pour 100 g). Ajouter « Branded » pour inclure les
+#    produits de marque du commerce (beaucoup plus de resultats, qualite
+#    plus heterogene).
+# =====================================================================
+usda:
+  api:
+    key: ${USDA_API_KEY:}
+    base-url: ${USDA_API_BASE_URL:https://api.nal.usda.gov/fdc/v1}
+    page-size: ${USDA_API_PAGE_SIZE:20}
+    data-types: ${USDA_API_DATA_TYPES:Foundation,SR Legacy}
+
+# =====================================================================
+#  OPEN FOOD FACTS (seconde source d'aliments)
+# ---------------------------------------------------------------------
+#  Pourquoi ? USDA couvre tres bien les aliments GENERIQUES (banane crue,
+#  blanc de poulet, riz cuit) mais tres mal les PRODUITS EMBALLES vendus
+#  en Europe : yaourts, barres cerealieres, plats prepares, biscuits.
+#  Open Food Facts est une base collaborative de plusieurs millions de
+#  produits du commerce. Elle n'est interrogee qu'en DERNIER RECOURS,
+#  quand le cache local et USDA n'ont rien renvoye.
+#
+#  AUCUNE CLE API : l'API est publique et gratuite. Elle exige en
+#  revanche un en-tete User-Agent identifiant l'application — une requete
+#  anonyme peut etre refusee ou fortement limitee. Ce n'est pas un
+#  secret : le nom de l'app et sa version suffisent.
+#
+#  LICENCE : les donnees Open Food Facts sont publiees sous ODbL. Leur
+#  reutilisation impose de crediter la source. La mention
+#  « Open Food Facts (ODbL) » figure dans les mentions legales de l'app.
+#
+#  enabled : mettre a false coupe proprement la source d'appoint (le
+#  reste du module nutrition continue de fonctionner sur USDA seul).
+# =====================================================================
+openfoodfacts:
+  api:
+    enabled: ${OFF_API_ENABLED:true}
+    base-url: ${OFF_API_BASE_URL:https://world.openfoodfacts.org}
+    user-agent: ${OFF_API_USER_AGENT:FitForge-AI/1.0}
+
+# =====================================================================
+#  GEMINI (analyse de photo de repas + ajout vocal)
+# ---------------------------------------------------------------------
+#  Deux usages, une seule cle :
+#   * l'adherent photographie son assiette : Gemini identifie les
+#     aliments et estime les quantites ;
+#   * l'adherent DIT ce qu'il a mange : Gemini transcrit et convertit les
+#     unites parlees en grammes (« deux oeufs » -> 100 g).
+#  Dans les deux cas, le module nutrition retrouve ensuite les macros
+#  dans le catalogue (cache local, USDA, puis Open Food Facts).
+#
+#  /!\ AUCUNE VALEUR PAR DEFAUT POUR LA CLE — VOLONTAIREMENT.
+#      Contrairement a USDA (cle de dev historique ci-dessus), la cle
+#      Gemini n'est JAMAIS ecrite dans le depot. Elle doit venir de la
+#      variable d'environnement GEMINI_API_KEY :
+#
+#        Windows (PowerShell, session courante)
+#          $env:GEMINI_API_KEY = "votre-cle"
+#        Windows (permanent, rouvrir le terminal ensuite)
+#          setx GEMINI_API_KEY "votre-cle"
+#        Linux / macOS
+#          export GEMINI_API_KEY="votre-cle"
+#
+#      Si la variable est absente, l'application demarre normalement et
+#      SEULES l'analyse photo et l'analyse vocale sont desactivees : les
+#      endpoints repondent alors un message clair au lieu de faire tomber
+#      tout le module nutrition.
+#
+#  La cle part dans l'en-tete x-goog-api-key, jamais dans une URL : elle
+#  n'apparait donc dans aucun log d'acces ni aucune trace d'exception.
+#
+#  timeout-seconds       : l'analyse d'image est plus lente qu'un appel texte.
+#  voice-timeout-seconds : plus long encore — le modele doit transcrire
+#                          l'enregistrement AVANT de raisonner dessus.
+#  max-image-bytes       : garde-fou avant encodage base64 (l'API plafonne
+#                          la taille totale de la requete).
+#  max-audio-bytes       : idem cote vocal. 10 Mo laissent tres largement
+#                          la place a une description de repas (quelques
+#                          dizaines de secondes en AAC).
+# =====================================================================
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:}
+    base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta}
+    model: ${GEMINI_MODEL:gemini-flash-lite-latest}
+    timeout-seconds: ${GEMINI_TIMEOUT_SECONDS:20}
+    voice-timeout-seconds: ${GEMINI_VOICE_TIMEOUT_SECONDS:30}
+    max-image-bytes: ${GEMINI_MAX_IMAGE_BYTES:8388608}
+    max-audio-bytes: ${GEMINI_MAX_AUDIO_BYTES:10485760}
+    # ── Coach IA (chat textuel) ──────────────────────────────────────
+    #  coach-max-output-tokens : un coach doit etre BREF. Ce plafond n'est
+    #  pas qu'une economie de quota, c'est une contrainte d'ecriture : une
+    #  reponse de 20 lignes ne se lit pas sur un telephone.
+    #
+    #  coach-max-messages-per-hour : garde-fou de quota PAR ADHERENT. La
+    #  cle Gemini est partagee avec l'analyse de photo et l'ajout vocal —
+    #  sans borne, une boucle cote client les priverait toutes les deux.
+    coach-timeout-seconds: ${GEMINI_COACH_TIMEOUT_SECONDS:25}
+    coach-max-output-tokens: ${GEMINI_COACH_MAX_OUTPUT_TOKENS:700}
+    coach-max-messages-per-hour: ${GEMINI_COACH_MAX_MESSAGES_PER_HOUR:40}
+    # ── Generation de programme (IA FitForge) ────────────────────────
+    #  C'est l'appel Gemini le PLUS LOURD de l'application : il embarque
+    #  le catalogue des exercices realisables par l'adherent et produit un
+    #  programme complet (plusieurs seances, chacune avec ses exercices,
+    #  ses charges et ses consignes). D'ou des reglages a part.
+    #
+    #  program-model : un modele plus capable que celui du reste de l'app.
+    #    Composer un programme coherent (decoupage, volume hebdomadaire,
+    #    ordre des exercices, pourcentages de charge) demande du
+    #    raisonnement, pas seulement de la redaction — et l'operation est
+    #    rare, quelques fois par adherent, contre plusieurs messages par
+    #    jour pour le coach IA. Par defaut : le modele general du projet.
+    #
+    #  program-timeout-seconds : une generation complete est longue. Un
+    #    delai court ferait echouer des appels qui allaient aboutir, et
+    #    l'adherent perdrait son quota pour rien.
+    #
+    #  program-max-output-tokens : une reponse tronquee est un JSON
+    #    invalide, donc une generation perdue. Le plafond est genereux
+    #    volontairement — sept seances de huit exercices avec consignes,
+    #    plus l'explication du programme, occupent beaucoup de place.
+    #
+    #  program-max-catalog : nombre d'exercices soumis au modele. Au-dela,
+    #    le choix se dilue (il picore au lieu de composer) et le cout
+    #    monte sans gain.
+    #
+    #  program-max-per-day : garde-fou de quota PAR ADHERENT. Les
+    #    tentatives qui echouent comptent aussi : elles consomment le meme
+    #    quota, sinon le plafond serait contournable.
+    program-model: ${GEMINI_PROGRAM_MODEL:${GEMINI_MODEL:gemini-flash-latest}}
+    program-timeout-seconds: ${GEMINI_PROGRAM_TIMEOUT_SECONDS:90}
+    program-max-output-tokens: ${GEMINI_PROGRAM_MAX_OUTPUT_TOKENS:8192}
+    program-max-catalog: ${GEMINI_PROGRAM_MAX_CATALOG:150}
+    program-max-per-day: ${GEMINI_PROGRAM_MAX_PER_DAY:5}
+
+# =====================================================================
+#  Swagger / OpenAPI (springdoc)
+# =====================================================================
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+  api-docs:
+    path: /v3/api-docs

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Votre compte coach FitForge est activé</title>
+  <!--
+    ================================================================
+     Email d'activation du compte coach
+    ----------------------------------------------------------------
+     Memes contraintes que verification.html : mise en page en <table>,
+     styles EN LIGNE, 600 px max, aucune image distante.
+
+     Difference de ton assumee : cet email annonce une BONNE nouvelle
+     attendue depuis plusieurs jours. Il ne demande aucune action
+     urgente et ne contient aucun secret -- donc pas de bloc de code,
+     pas de compte a rebours, pas d'avertissement de securite.
+    ================================================================
+  -->
+</head>
+<body style="margin:0; padding:0; background-color:#080c1a; -webkit-font-smoothing:antialiased;">
+
+<div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+  Bonne nouvelle — votre profil coach a été validé par l'équipe FitForge.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background-color:#080c1a; padding:32px 16px;">
+  <tr>
+    <td align="center">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+             style="width:100%; max-width:600px; background-color:#0f1428; border-radius:24px;
+                    border:1px solid #232a4a; overflow:hidden;">
+
+        <!-- ══ En-tête ═════════════════════════════════════════ -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#7C4DFF 0%,#00E5FF 100%);
+                     background-color:#7C4DFF; padding:36px 32px; text-align:center;">
+            <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                        font-size:30px; font-weight:800; letter-spacing:-0.8px; color:#ffffff;">
+              FIT<span style="font-weight:400;">FORGE</span>
+            </div>
+            <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+                        font-size:11px; font-weight:700; letter-spacing:3px;
+                        color:rgba(255,255,255,0.85); margin-top:6px; text-transform:uppercase;">
+              Espace coach
+            </div>
+          </td>
+        </tr>
+
+        <!-- ══ Corps ═══════════════════════════════════════════ -->
+        <tr>
+          <td style="padding:38px 32px 8px 32px;
+                     font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+            <div style="font-size:44px; line-height:1; text-align:center; margin-bottom:18px;">✅</div>
+
+            <h1 style="margin:0 0 14px 0; font-size:23px; font-weight:700; color:#ffffff;
+                       line-height:1.3; text-align:center;">
+              Votre profil coach est validé
+            </h1>
+
+            <p style="margin:0 0 18px 0; font-size:15px; line-height:1.65; color:#b8c0d9;">
+              Bonjour <strong th:text="${fullName}" style="color:#ffffff;">Sami</strong>,
+            </p>
+
+            <p style="margin:0 0 18px 0; font-size:15px; line-height:1.65; color:#b8c0d9;">
+              L'équipe FitForge a examiné votre dossier et vos justificatifs.
+              Tout est en ordre : <strong style="color:#ffffff;">votre compte coach est
+              désormais actif</strong>.
+            </p>
+
+            <!-- Ce qui change concretement, en trois lignes. Un email qui dit
+                 seulement « c'est validé » laisse le coach chercher lui-meme
+                 ce qui s'est ouvert. -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="background-color:#141a33; border:1px solid #232a4a;
+                          border-radius:16px; margin:6px 0 22px 0;">
+              <tr>
+                <td style="padding:20px 22px; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                  <div style="font-size:12px; font-weight:700; letter-spacing:1.5px;
+                              color:#7C4DFF; text-transform:uppercase; margin-bottom:12px;">
+                    Ce qui s'ouvre pour vous
+                  </div>
+                  <div style="font-size:14px; line-height:1.9; color:#d5dbec;">
+                    &nbsp;&#9679;&nbsp; Votre profil apparaît dans l'annuaire des coachs<br>
+                    &nbsp;&#9679;&nbsp; Les adhérents peuvent vous envoyer une demande de suivi<br>
+                    &nbsp;&#9679;&nbsp; Vous pouvez composer des programmes et discuter avec eux
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:0 0 26px 0; font-size:15px; line-height:1.65; color:#b8c0d9;">
+              Ouvrez l'application FitForge pour accéder à votre tableau de bord.
+              Un profil complet et une photo soignée sont ce qui décide un adhérent
+              à vous contacter plutôt qu'un autre.
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- ══ Pied ════════════════════════════════════════════ -->
+        <tr>
+          <td style="padding:22px 32px 30px 32px; border-top:1px solid #232a4a;
+                     font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+            <p style="margin:0; font-size:12px; line-height:1.6; color:#6b7599; text-align:center;">
+              Vous recevez cet email parce qu'un compte coach FitForge a été créé
+              avec cette adresse.<br>
+              FitForge AI — Forge ton potentiel.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

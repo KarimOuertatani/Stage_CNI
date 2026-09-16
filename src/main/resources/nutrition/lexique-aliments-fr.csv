@@ -1,0 +1,870 @@
+# =====================================================================
+#  Lexique culinaire anglais <-> français  (USDA FoodData Central)
+# ---------------------------------------------------------------------
+#  Pourquoi ce fichier ? La base USDA est ENTIÈREMENT anglophone, alors
+#  que FitForge est une application française. Ce lexique sert DANS LES
+#  DEUX SENS :
+#
+#    * FR -> EN : « blanc de poulet » saisi par l'adhérent devient
+#      « chicken breast » avant l'appel USDA (sinon : zéro résultat) ;
+#    * EN -> FR : « Chicken, broiler or fryer, breast, meat only, raw »
+#      renvoyé par USDA devient « Poulet, de chair, blanc, viande seule,
+#      cru » avant l'affichage.
+#
+#  FORMAT — une entrée par ligne, séparateur « ; » :
+#
+#      anglais;français     entrée BIDIRECTIONNELLE (cas général)
+#     >anglais;français     AFFICHAGE seulement (EN -> FR)
+#     <anglais;français     RECHERCHE seulement  (FR -> EN)
+#
+#  Les marqueurs « > » et « < » servent à lever les ambiguïtés. Exemple :
+#  « grilled » et « broiled » se traduisent tous deux par « grillé », mais
+#  l'inverse doit choisir UN seul terme anglais : on laisse « grilled »
+#  bidirectionnel et on marque « broiled » en affichage seul.
+#
+#  RÈGLES DE MAINTENANCE :
+#   1. Les expressions de PLUSIEURS MOTS sont prioritaires sur les mots
+#      isolés (« pomme de terre » l'emporte sur « pomme »). Aucun besoin
+#      de les placer en tête : l'appariement se fait du plus long au plus
+#      court, quelle que soit la position dans le fichier.
+#   2. En cas de doublon côté français, la PREMIÈRE ligne du fichier
+#      gagne pour le sens FR -> EN. Placer donc la traduction la plus
+#      utile en premier, ou marquer les autres « > ».
+#   3. Les pluriels sont gérés automatiquement (« bananas » trouve
+#      « banana ») : inutile de les dupliquer, sauf pluriel irrégulier.
+#   4. Les accents sont ignorés à la recherche : l'adhérent peut taper
+#      « cereales » et trouver « céréales ». Écrire malgré tout le
+#      français CORRECTEMENT ACCENTUÉ : c'est ce texte qui est affiché.
+#   5. Un terme absent n'est PAS une erreur : il traverse tel quel.
+#      La dégradation est toujours gracieuse.
+#   6. Encodage OBLIGATOIRE : UTF-8.
+# =====================================================================
+
+
+# ---------------------------------------------------------------------
+#  MODES DE CUISSON ET DE PRÉPARATION
+#  Ces descripteurs constituent l'essentiel des libellés USDA : les
+#  traduire est ce qui rend un résultat lisible.
+# ---------------------------------------------------------------------
+raw;cru
+cooked;cuit
+uncooked;non cuit
+>unprepared;non préparé
+boiled;bouilli
+roasted;rôti
+baked;au four
+>grilled;grillé
+>broiled;grillé
+fried;frit
+deep fried;en friture
+>pan-fried;poêlé
+>stir-fried;sauté
+>sauteed;sauté
+# Cotes RECHERCHE, ces trois cuissons doivent devenir « cooked » et non leur
+# traduction litterale : USDA ne dit jamais « grilled » pour un aliment brut
+# (« salmon grilled » ne renvoie RIEN, « salmon cooked » trouve le poisson).
+# Le sens AFFICHAGE, lui, garde bien « grilled » -> « grillé » ci-dessus.
+<cooked;grillé
+<cooked;poêlé
+<cooked;sauté
+<cooked;à la plancha
+steamed;à la vapeur
+braised;braisé
+stewed;mijoté
+poached;poché
+smoked;fumé
+cured;saumuré
+dried;séché
+dehydrated;déshydraté
+freeze-dried;lyophilisé
+canned;en conserve
+frozen;surgelé
+fresh;frais
+chilled;réfrigéré
+prepared;préparé
+homemade;fait maison
+>home-prepared;fait maison
+>home recipe;recette maison
+commercial;industriel
+>commercially prepared;préparation industrielle
+ready-to-eat;prêt à consommer
+ready to drink;prêt à boire
+>microwaved;au micro-ondes
+reheated;réchauffé
+>toasted;grillé
+blanched;blanchi
+pickled;au vinaigre
+marinated;mariné
+breaded;pané
+battered;en beignet
+coated;enrobé
+stuffed;farci
+seasoned;assaisonné
+unseasoned;non assaisonné
+drained;égoutté
+undrained;non égoutté
+rinsed;rincé
+peeled;pelé
+unpeeled;non pelé
+skinless;sans peau
+with skin;avec peau
+>skin on;avec la peau
+boneless;désossé
+bone-in;avec os
+ground;haché
+minced;émincé
+>chopped;coupé en morceaux
+sliced;en tranches
+diced;en dés
+grated;râpé
+>shredded;râpé
+mashed;en purée
+>pureed;en purée
+whole;entier
+halves;moitiés
+pieces;morceaux
+strips;lanières
+>NFS;non précisé
+>not further specified;non précisé
+>as purchased;tel qu'acheté
+>edible portion;partie comestible
+
+
+# ---------------------------------------------------------------------
+#  ASSAISONNEMENT, CONSERVATION, TENEURS
+# ---------------------------------------------------------------------
+with salt;salé
+without salt;sans sel
+salted;salé
+unsalted;non salé
+no salt added;sans sel ajouté
+low sodium;pauvre en sodium
+sweetened;sucré
+unsweetened;non sucré
+no sugar added;sans sucre ajouté
+sugar free;sans sucre
+in water;au naturel
+in oil;à l'huile
+in brine;en saumure
+in syrup;au sirop
+in juice;au jus
+light syrup;sirop léger
+heavy syrup;sirop épais
+enriched;enrichi
+unenriched;non enrichi
+>fortified;enrichi
+refined;raffiné
+unrefined;non raffiné
+whole grain;céréales complètes
+whole wheat;blé complet
+>whole-grain;complet
+low fat;allégé en matières grasses
+>lowfat;allégé
+nonfat;0% de matières grasses
+fat free;sans matières grasses
+reduced fat;matières grasses réduites
+skim;écrémé
+semi-skimmed;demi-écrémé
+lean;maigre
+extra lean;très maigre
+lean meat;viande maigre
+meat only;viande seule
+meat and skin;viande et peau
+light;allégé
+regular;classique
+plain;nature
+flavored;aromatisé
+high protein;riche en protéines
+low carb;pauvre en glucides
+low calorie;peu calorique
+all varieties;toutes variétés
+variety;variété
+average;moyenne
+
+
+# ---------------------------------------------------------------------
+#  COULEURS, VARIÉTÉS, CALIBRES, ÉTATS
+#  Descripteurs très frequents en deuxieme position d'un libelle USDA
+#  (« Rice, white, long-grain, regular, cooked »).
+# ---------------------------------------------------------------------
+red;rouge
+green;vert
+>white;blanc
+yellow;jaune
+black;noir
+brown;brun
+ripe;mûr
+>unripe;vert
+>mature;mûr
+long-grain;grain long
+>long grain;grain long
+short-grain;grain rond
+medium-grain;grain moyen
+>sweet;sucré
+sour;acide
+bitter;amer
+mild;doux
+spicy;épicé
+firm;ferme
+soft;tendre
+small;petit
+large;gros
+medium;moyen
+young;jeune
+wild;sauvage
+organic;bio
+imported;importé
+farmed;d'élevage
+>farm-raised;d'élevage
+>wild-caught;pêché en mer
+atlantic;Atlantique
+pacific;Pacifique
+flesh only;chair seule
+flesh;chair
+>drained solids;solides égouttés
+powder;en poudre
+greek;grec
+>sharp;affiné
+>extra sharp;très affiné
+>dry heat;chaleur sèche
+>moist heat;chaleur humide
+
+
+# ---------------------------------------------------------------------
+#  VIANDES, VOLAILLES, CHARCUTERIE
+# ---------------------------------------------------------------------
+meat;viande
+poultry;volaille
+chicken;poulet
+chicken breast;blanc de poulet
+chicken thigh;cuisse de poulet
+chicken wing;aile de poulet
+>broiler or fryer;de chair
+>broilers or fryers;de chair
+turkey;dinde
+duck;canard
+goose;oie
+quail;caille
+rabbit;lapin
+game;gibier
+beef;bœuf
+ground beef;bœuf haché
+veal;veau
+veal cutlet;escalope de veau
+pork;porc
+lamb;agneau
+mutton;mouton
+ham;jambon
+bacon;bacon
+sausage;saucisse
+salami;salami
+chorizo;chorizo
+pepperoni;pepperoni
+cold cuts;charcuterie
+>deli meat;charcuterie
+>lunchmeat;charcuterie
+tenders;aiguillettes
+cutlet;escalope
+escalope;escalope
+steak;steak
+sirloin;aloyau
+tenderloin;filet mignon
+ribeye;entrecôte
+>brisket;poitrine de bœuf
+loin;longe
+shoulder;épaule
+leg;cuisse
+>thigh;cuisse
+rib;côte
+ribs;côtes
+chop;côtelette
+drumstick;pilon
+breast;blanc
+wing;aile
+liver;foie
+kidney;rognon
+heart;cœur
+tripe;tripes
+gizzard;gésier
+offal;abats
+<ground beef;viande hachée
+<ham;jambon blanc
+
+
+# ---------------------------------------------------------------------
+#  POISSONS ET FRUITS DE MER
+# ---------------------------------------------------------------------
+fish;poisson
+fish fillet;filet de poisson
+fillet;filet
+salmon;saumon
+smoked salmon;saumon fumé
+tuna;thon
+canned tuna;thon en conserve
+cod;cabillaud
+haddock;églefin
+hake;merlu
+pollock;colin
+sea bass;bar
+sea bream;dorade
+trout;truite
+sardine;sardine
+anchovy;anchois
+herring;hareng
+mackerel;maquereau
+halibut;flétan
+sole;sole
+tilapia;tilapia
+swordfish;espadon
+eel;anguille
+carp;carpe
+catfish;poisson-chat
+monkfish;lotte
+red mullet;rouget
+seafood;fruits de mer
+shellfish;crustacés
+shrimp;crevette
+prawn;gambas
+crab;crabe
+lobster;homard
+crayfish;écrevisse
+langoustine;langoustine
+squid;calmar
+octopus;poulpe
+cuttlefish;seiche
+mussels;moules
+clams;palourdes
+oysters;huîtres
+scallops;coquilles Saint-Jacques
+surimi;surimi
+caviar;caviar
+roe;œufs de poisson
+
+
+# ---------------------------------------------------------------------
+#  ŒUFS
+# ---------------------------------------------------------------------
+egg;œuf
+whole egg;œuf entier
+egg white;blanc d'œuf
+egg yolk;jaune d'œuf
+scrambled;brouillé
+hard-boiled;dur
+soft-boiled;mollet
+omelet;omelette
+>omelette;omelette
+
+
+# ---------------------------------------------------------------------
+#  PRODUITS LAITIERS
+# ---------------------------------------------------------------------
+dairy;produits laitiers
+milk;lait
+whole milk;lait entier
+skim milk;lait écrémé
+buttermilk;babeurre
+condensed milk;lait concentré
+evaporated milk;lait évaporé
+powdered milk;lait en poudre
+>dry milk;lait en poudre
+cream;crème
+heavy cream;crème épaisse
+sour cream;crème aigre
+whipped cream;crème fouettée
+yogurt;yaourt
+>yoghurt;yaourt
+greek yogurt;yaourt grec
+cheese;fromage
+cheddar;cheddar
+mozzarella;mozzarella
+parmesan;parmesan
+gouda;gouda
+brie;brie
+camembert;camembert
+feta;feta
+goat cheese;fromage de chèvre
+cream cheese;fromage à tartiner
+cottage cheese;cottage cheese
+ricotta;ricotta
+blue cheese;fromage bleu
+swiss cheese;emmental
+emmental;emmental
+butter;beurre
+ghee;beurre clarifié
+margarine;margarine
+ice cream;crème glacée
+custard;crème anglaise
+whey;lactosérum
+whey protein;protéine de lactosérum
+casein;caséine
+lactose free;sans lactose
+<cottage cheese;fromage blanc
+<plain yogurt;yaourt nature
+
+
+# ---------------------------------------------------------------------
+#  CÉRÉALES, PAINS, PÂTES, FÉCULENTS
+# ---------------------------------------------------------------------
+rice;riz
+white rice;riz blanc
+brown rice;riz complet
+basmati;basmati
+wild rice;riz sauvage
+pasta;pâtes
+spaghetti;spaghetti
+macaroni;macaroni
+noodles;nouilles
+lasagna;lasagnes
+ravioli;ravioli
+couscous;couscous
+semolina;semoule
+bulgur;boulgour
+quinoa;quinoa
+oats;avoine
+oatmeal;flocons d'avoine
+>rolled oats;flocons d'avoine
+barley;orge
+rye;seigle
+wheat;blé
+flour;farine
+wheat flour;farine de blé
+cornmeal;farine de maïs
+corn;maïs
+sweet corn;maïs doux
+cornstarch;fécule de maïs
+buckwheat;sarrasin
+millet;millet
+spelt;épeautre
+bread;pain
+white bread;pain blanc
+whole wheat bread;pain complet
+baguette;baguette
+pita;pain pita
+tortilla;tortilla
+bagel;bagel
+croissant;croissant
+brioche;brioche
+toast;pain grillé
+crackers;crackers
+rice crackers;galettes de riz
+rice cake;galette de riz
+breadcrumbs;chapelure
+cereal;céréales
+breakfast cereal;céréales du petit-déjeuner
+granola;granola
+muesli;muesli
+cornflakes;pétales de maïs
+bran;son
+wheat bran;son de blé
+wheat germ;germe de blé
+germ;germe
+starch;amidon
+gluten free;sans gluten
+>dough;pâte
+<whole wheat pasta;pâtes complètes
+
+
+# ---------------------------------------------------------------------
+#  LÉGUMINEUSES
+# ---------------------------------------------------------------------
+legumes;légumineuses
+beans;haricots
+kidney beans;haricots rouges
+black beans;haricots noirs
+white beans;haricots blancs
+>navy beans;haricots blancs
+pinto beans;haricots pinto
+green beans;haricots verts
+>snap beans;haricots verts
+lima beans;haricots de Lima
+fava beans;fèves
+>broad beans;fèves
+soybeans;graines de soja
+soy;soja
+tofu;tofu
+tempeh;tempeh
+edamame;édamame
+lentils;lentilles
+chickpeas;pois chiches
+>garbanzo;pois chiches
+hummus;houmous
+peas;petits pois
+split peas;pois cassés
+black-eyed peas;haricots à œil noir
+
+
+# ---------------------------------------------------------------------
+#  LÉGUMES
+# ---------------------------------------------------------------------
+vegetables;légumes
+potato;pomme de terre
+sweet potato;patate douce
+french fries;frites
+fries;frites
+tomato;tomate
+tomato sauce;sauce tomate
+tomato paste;concentré de tomate
+carrot;carotte
+onion;oignon
+garlic;ail
+shallot;échalote
+leek;poireau
+celery;céleri
+cucumber;concombre
+zucchini;courgette
+eggplant;aubergine
+>aubergine;aubergine
+bell pepper;poivron
+pepper;poivron
+>peppers;poivrons
+chili pepper;piment
+>chili;piment
+lettuce;laitue
+salad;salade
+spinach;épinards
+kale;chou frisé
+cabbage;chou
+red cabbage;chou rouge
+broccoli;brocoli
+cauliflower;chou-fleur
+brussels sprouts;choux de Bruxelles
+asparagus;asperge
+artichoke;artichaut
+mushroom;champignon
+beet;betterave
+turnip;navet
+radish;radis
+pumpkin;citrouille
+squash;courge
+butternut squash;courge butternut
+okra;gombo
+avocado;avocat
+olive;olive
+seaweed;algues
+sprouts;germes
+watercress;cresson
+endive;endive
+arugula;roquette
+fennel;fenouil
+parsnip;panais
+rutabaga;rutabaga
+yam;igname
+cassava;manioc
+plantain;plantain
+ginger;gingembre
+horseradish;raifort
+
+
+# ---------------------------------------------------------------------
+#  FRUITS
+# ---------------------------------------------------------------------
+fruit;fruit
+apple;pomme
+banana;banane
+orange;orange
+tangerine;mandarine
+clementine;clémentine
+lemon;citron
+lime;citron vert
+grapefruit;pamplemousse
+grape;raisin
+strawberry;fraise
+raspberry;framboise
+blueberry;myrtille
+blackberry;mûre
+cranberry;canneberge
+cherry;cerise
+peach;pêche
+apricot;abricot
+plum;prune
+prune;pruneau
+pear;poire
+pineapple;ananas
+mango;mangue
+papaya;papaye
+kiwi;kiwi
+melon;melon
+watermelon;pastèque
+cantaloupe;melon cantaloup
+fig;figue
+date;datte
+raisins;raisins secs
+pomegranate;grenade
+coconut;noix de coco
+guava;goyave
+passion fruit;fruit de la passion
+lychee;litchi
+persimmon;kaki
+rhubarb;rhubarbe
+dried fruit;fruits secs
+
+
+# ---------------------------------------------------------------------
+#  FRUITS À COQUE ET GRAINES
+# ---------------------------------------------------------------------
+nuts;fruits à coque
+almond;amande
+walnut;noix
+hazelnut;noisette
+cashew;noix de cajou
+pistachio;pistache
+peanut;cacahuète
+peanut butter;beurre de cacahuète
+almond butter;purée d'amande
+pecan;noix de pécan
+macadamia;noix de macadamia
+brazil nut;noix du Brésil
+pine nuts;pignons de pin
+chestnut;châtaigne
+seeds;graines
+sunflower seeds;graines de tournesol
+pumpkin seeds;graines de courge
+sesame;sésame
+sesame seeds;graines de sésame
+tahini;tahini
+flaxseed;graines de lin
+chia seeds;graines de chia
+>chia;chia
+hemp seeds;graines de chanvre
+poppy seeds;graines de pavot
+
+
+# ---------------------------------------------------------------------
+#  MATIÈRES GRASSES ET HUILES
+# ---------------------------------------------------------------------
+oil;huile
+olive oil;huile d'olive
+sunflower oil;huile de tournesol
+canola oil;huile de colza
+>rapeseed oil;huile de colza
+coconut oil;huile de coco
+sesame oil;huile de sésame
+peanut oil;huile d'arachide
+corn oil;huile de maïs
+soybean oil;huile de soja
+palm oil;huile de palme
+vegetable oil;huile végétale
+lard;saindoux
+shortening;graisse végétale
+fat;gras
+>salad or cooking;assaisonnement ou cuisson
+
+
+# ---------------------------------------------------------------------
+#  SUCRES, DESSERTS, EN-CAS
+# ---------------------------------------------------------------------
+sugar;sucre
+brown sugar;sucre roux
+powdered sugar;sucre glace
+honey;miel
+maple syrup;sirop d'érable
+syrup;sirop
+jam;confiture
+jelly;gelée
+marmalade;marmelade
+chocolate;chocolat
+dark chocolate;chocolat noir
+milk chocolate;chocolat au lait
+white chocolate;chocolat blanc
+cocoa;cacao
+cocoa powder;cacao en poudre
+candy;bonbon
+caramel;caramel
+nougat;nougat
+marshmallow;guimauve
+pudding;flan
+mousse;mousse
+sorbet;sorbet
+popcorn;pop-corn
+potato chips;chips
+>chips;chips
+pretzel;bretzel
+pastry;pâtisserie
+pie;tarte
+cake;gâteau
+cookie;biscuit
+>biscuit;biscuit
+muffin;muffin
+donut;beignet
+brownie;brownie
+pancake;pancake
+waffle;gaufre
+crepe;crêpe
+protein bar;barre protéinée
+energy bar;barre énergétique
+cereal bar;barre de céréales
+
+
+# ---------------------------------------------------------------------
+#  BOISSONS
+# ---------------------------------------------------------------------
+beverage;boisson
+>drink;boisson
+water;eau
+mineral water;eau minérale
+sparkling water;eau gazeuse
+juice;jus
+orange juice;jus d'orange
+apple juice;jus de pomme
+lemonade;limonade
+soda;soda
+soft drink;boisson gazeuse
+cola;cola
+coffee;café
+espresso;expresso
+tea;thé
+green tea;thé vert
+black tea;thé noir
+herbal tea;tisane
+beer;bière
+wine;vin
+red wine;vin rouge
+white wine;vin blanc
+alcohol;alcool
+smoothie;smoothie
+milkshake;milkshake
+energy drink;boisson énergisante
+sports drink;boisson pour sportifs
+protein shake;boisson protéinée
+almond milk;lait d'amande
+soy milk;lait de soja
+oat milk;lait d'avoine
+coconut milk;lait de coco
+
+
+# ---------------------------------------------------------------------
+#  CONDIMENTS, SAUCES, ÉPICES, HERBES
+# ---------------------------------------------------------------------
+salt;sel
+black pepper;poivre noir
+spices;épices
+herbs;herbes
+parsley;persil
+basil;basilic
+thyme;thym
+rosemary;romarin
+oregano;origan
+mint;menthe
+cilantro;coriandre
+>coriander;coriandre
+dill;aneth
+chives;ciboulette
+bay leaf;feuille de laurier
+sage;sauge
+tarragon;estragon
+cinnamon;cannelle
+nutmeg;muscade
+clove;clou de girofle
+cumin;cumin
+turmeric;curcuma
+paprika;paprika
+curry;curry
+saffron;safran
+cardamom;cardamome
+vanilla;vanille
+mustard;moutarde
+ketchup;ketchup
+mayonnaise;mayonnaise
+vinegar;vinaigre
+balsamic vinegar;vinaigre balsamique
+soy sauce;sauce soja
+hot sauce;sauce piquante
+barbecue sauce;sauce barbecue
+salad dressing;vinaigrette
+dressing;assaisonnement
+sauce;sauce
+gravy;jus de viande
+broth;bouillon
+>stock;bouillon
+soup;soupe
+stew;ragoût
+puree;purée
+
+
+# ---------------------------------------------------------------------
+#  PLATS PRÉPARÉS ET DIVERS
+# ---------------------------------------------------------------------
+meal;repas
+dish;plat
+sandwich;sandwich
+burger;burger
+hamburger;hamburger
+hot dog;hot-dog
+taco;taco
+burrito;burrito
+sushi;sushi
+pizza;pizza
+casserole;gratin
+gratin;gratin
+quiche;quiche
+risotto;risotto
+paella;paella
+chili con carne;chili con carne
+dumpling;raviole
+spring roll;rouleau de printemps
+nuggets;nuggets
+supplement;complément
+protein powder;poudre protéinée
+infant formula;lait infantile
+baby food;aliment pour bébé
+>babyfood;aliment pour bébé
+>infant;nourrisson
+
+
+# ---------------------------------------------------------------------
+#  PLATS COURANTS — RECHERCHE SEULE (analyse de photo)
+#  Un modèle de vision décrit un plat, pas une entrée de base de données :
+#  il renvoie « œuf au plat » là où USDA connaît « Egg, whole, fried ».
+#  Ces entrées sont marquées « < » (FR -> EN uniquement) : elles ne
+#  doivent jamais servir à traduire un libellé USDA vers le français.
+# ---------------------------------------------------------------------
+<fried egg;œuf au plat
+<fried egg;oeuf au plat
+<scrambled eggs;œufs brouillés
+<hard-boiled egg;œuf dur
+<poached egg;œuf poché
+<ground beef;steak haché
+<turkey breast;blanc de dinde
+<chicken thigh;cuisse de poulet
+<chicken roasted;poulet rôti
+<potato cooked;pommes de terre sautées
+<potato mashed;purée de pommes de terre
+<lettuce raw;salade verte
+<salad vegetable;salade composée
+<whole wheat pasta;pâtes complètes
+<brown rice;riz complet
+<white bread;pain de mie
+<swiss cheese;gruyère
+<swiss cheese;emmental râpé
+<water;eau plate
+<orange juice;jus d'orange pressé
+
+
+# ---------------------------------------------------------------------
+#  NUTRIMENTS (apparaissent dans certains libellés de marque)
+# ---------------------------------------------------------------------
+protein;protéines
+carbohydrate;glucides
+carbohydrates;glucides
+fiber;fibres
+calories;calories
+energy;énergie
+sodium;sodium
+calcium;calcium
+iron;fer
+vitamin;vitamine
+
+
+# ---------------------------------------------------------------------
+#  MOTS DE LIAISON
+#  Peu spectaculaires mais indispensables : sans eux, un libellé traduit
+#  garde des « and » / « with » en plein milieu.
+# ---------------------------------------------------------------------
+and;et
+or;ou
+with;avec
+without;sans
+added;ajouté
+including;y compris
+type;type
+total;total
