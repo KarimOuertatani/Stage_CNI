@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   FitForge — Console d'administration : socle visuel
+   ---------------------------------------------------------------------
+   L'identite est reprise de l'application mobile et des emails
+   transactionnels, pas reinventee : meme fond (#080c1a), meme surface
+   de carte (#0f1428), meme bordure (#232a4a), meme degrade de marque
+   (violet -> cyan). Une console qui ne ressemble pas au produit qu'elle
+   administre donne l'impression de deux logiciels differents.
+
+   Le mode sombre est le SEUL mode, et c'est un choix : l'application
+   mobile propose les deux, mais une console d'administration se
+   consulte longtemps, sur grand ecran, et n'a aucune raison de dupliquer
+   une palette claire que personne n'utiliserait ici.
+   ===================================================================== */
+
+@theme {
+  /* ── Fonds ────────────────────────────────────────────────────── */
+  --color-ground: #080c1a;        /* fond de page */
+  --color-surface: #0f1428;       /* carte */
+  --color-surface-2: #141a33;     /* carte imbriquee, ligne survolee */
+  --color-line: #232a4a;          /* bordure */
+  --color-line-soft: #1a2039;     /* separateur discret */
+
+  /* ── Texte ────────────────────────────────────────────────────── */
+  --color-ink: #ffffff;
+  --color-ink-muted: #b8c0d9;
+  --color-ink-faint: #6b7599;
+
+  /* ── Marque ───────────────────────────────────────────────────── */
+  --color-violet: #7c4dff;
+  --color-cyan: #00e5ff;
+
+  /* ── Etats ────────────────────────────────────────────────────────
+     Choisis pour rester distinguables l'un de l'autre ET du fond
+     sombre. L'ambre n'est pas un rouge attenue : il porte « en
+     attente », un etat qui n'est ni une erreur ni une reussite. */
+  --color-ok: #22d39a;
+  --color-warn: #ffb74d;
+  --color-danger: #ff5a6e;
+  --color-info: #00e5ff;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--color-ground);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* =====================================================================
+   Halos d'ambiance
+   ---------------------------------------------------------------------
+   Transposition de l'AmbientBackdrop de l'application mobile. Deux
+   differences assumees :
+
+   - AUCUNE ANIMATION. Sur mobile, les halos derivent en 28 s parce que
+     l'ecran est contemplatif. Une console se lit ; un fond qui bouge
+     sous un tableau de 40 lignes fatigue et attire l'oeil au mauvais
+     endroit.
+   - Opacite plus basse (~0,10 contre 0,7 sur mobile) : ces pages sont
+     denses, et un fond trop present passerait derriere du texte.
+   ===================================================================== */
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(60rem 40rem at 12% -10%, color-mix(in oklab, var(--color-violet) 16%, transparent), transparent 70%),
+    radial-gradient(50rem 35rem at 92% 8%, color-mix(in oklab, var(--color-cyan) 10%, transparent), transparent 70%),
+    radial-gradient(45rem 40rem at 50% 108%, color-mix(in oklab, var(--color-violet) 9%, transparent), transparent 70%);
+}
+
+/* =====================================================================
+   Profondeur — transposition de AppDepth (application mobile)
+   ---------------------------------------------------------------------
+   Deux couches, jamais une seule : une ombre courte qui pose le contact,
+   une longue et diffuse qui donne la distance. Une unique ombre floue ne
+   produit pas de l'elevation, elle salit.
+   ===================================================================== */
+.depth {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.35),
+    0 12px 32px -12px rgb(0 0 0 / 0.55);
+}
+
+.depth-lg {
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 0.4),
+    0 24px 60px -20px rgb(0 0 0 / 0.65);
+}
+
+/* Arete lumineuse en haut de carte : la lumiere frappe le milieu du bord
+   et s'eteint aux angles. Une ligne uniforme se lirait comme un trait de
+   separation, pas comme un reflet. */
+.edge-lit {
+  position: relative;
+}
+.edge-lit::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.14) 25%,
+    rgb(255 255 255 / 0.14) 75%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Texte en degrade de marque. */
+.brand-text {
+  background: linear-gradient(135deg, var(--color-violet), var(--color-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* =====================================================================
+   Barres de defilement
+   ---------------------------------------------------------------------
+   Une barre claire par defaut sur fond sombre est la seule zone de
+   l'interface qui reste en mode clair, et cela se voit immediatement.
+   ===================================================================== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #2f3860;
+  background-clip: padding-box;
+}
+
+/* Respect des preferences systeme : on coupe l'effet, jamais l'usage. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
